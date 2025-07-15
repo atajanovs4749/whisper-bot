@@ -164,13 +164,14 @@ async def set_bot_commands(bot: Bot):
 # ======================= MAIN (WEBHOOK) =========================
 async def main():
     await set_bot_commands(bot)
-    await bot.delete_webhook(drop_pending_updates=True)
+    await bot.set_webhook(url=WEBHOOK_URL)
+
     app = web.Application()
-    dp.startup.register(lambda _: bot.set_webhook(WEBHOOK_URL))
-    dp.startup.register(lambda _: logging.info("Webhook o'rnatildi."))
-    dp.shutdown.register(lambda _: logging.info("Bot to'xtadi."))
-    app.router.add_post("/webhook", dp.as_handler())
+    handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
+    handler.register(app, path="/webhook")
+
     return app
 
 if __name__ == '__main__':
     web.run_app(main(), host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
+
