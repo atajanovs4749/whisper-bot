@@ -49,7 +49,9 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = 60020965
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-
+# TEMP papka mavjudligini tekshirib yaratish
+if not os.path.exists("temp"):
+    os.makedirs("temp")
 # Loglar
 logging.basicConfig(level=logging.INFO)
 
