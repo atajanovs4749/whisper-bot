@@ -74,16 +74,10 @@ async def start_handler(message: types.Message):
         "- Ovozingiz tiniq eshitilsin.\n"
         "- Har bir audio faqat bir martalik xizmatni egallaydi."
     )
-
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="15 000 so'm — 5 audio", callback_data="tarif_5")
-        ],
-        [
-            InlineKeyboardButton(text="25 000 so'm — 9 audio", callback_data="tarif_9")
-        ]
+        [InlineKeyboardButton(text="15 000 so'm — 5 audio", callback_data="tarif_5")],
+        [InlineKeyboardButton(text="25 000 so'm — 9 audio", callback_data="tarif_9")]
     ])
-
     await message.answer(text, reply_markup=keyboard)
 
 # ======================= CALLBACK HANDLER (Tarif tanlash) =========================
@@ -94,15 +88,14 @@ async def tarif_callback(call: types.CallbackQuery):
 
     await bot.send_message(
         ADMIN_ID,
-        f"\ud83e\uddfe <b>Yangi to'lov chek yuborilishi kutilmoqda</b>\n\n"
-        f"\ud83d\udc64 Foydalanuvchi: <code>{call.from_user.id}</code>\n"
-        f"\ud83d\udce6 Tanlangan tarif: {tarif_text}"
+        f"[TO‘LOV KUTILMOQDA]\n\n"
+        f"Foydalanuvchi: <code>{call.from_user.id}</code>\n"
+        f"Tanlangan tarif: {tarif_text}"
     )
 
     await call.message.answer(
-        "\u2705 Tanlangan tarif: <b>{}</b>\n\n"
-        "Iltimos, to\u2018lov chek rasmini yuboring. Admin tasdiqlaganidan so\u2018ng foydalanishingiz mumkin."
-        .format(tarif_text),
+        f"✅ Tanlangan tarif: <b>{tarif_text}</b>\n\n"
+        "Iltimos, to‘lov chek rasmini yuboring. Admin tasdiqlaganidan so‘ng foydalanishingiz mumkin.",
         reply_markup=None
     )
     await call.answer()
@@ -115,14 +108,13 @@ async def approve_payment(message: types.Message):
 
     parts = message.text.strip().split()
     if len(parts) != 3:
-        await message.answer("\u274c Foydalanish: /tasdiq user_id limit\nMisol: /tasdiq 123456789 5")
+        await message.answer("❌ Foydalanish: /tasdiq user_id limit\nMisol: /tasdiq 123456789 5")
         return
 
     user_id, limit = parts[1], int(parts[2])
     set_user_limit(user_id, limit)
-    await bot.send_message(int(user_id), f"\u2705 To\u2018lov tasdiqlandi. Sizga {limit} ta audio imkoniyati berildi.")
-    await message.answer("\u2705 Tasdiq muvaffaqiyatli amalga oshirildi.")
-
+    await bot.send_message(int(user_id), f"✅ To‘lov tasdiqlandi. Sizga {limit} ta audio imkoniyati berildi.")
+    await message.answer("✅ Tasdiq muvaffaqiyatli amalga oshirildi.")
 # ======================= VOICE HANDLER =========================
 @dp.message(F.voice)
 async def voice_handler(message: types.Message):
@@ -130,28 +122,24 @@ async def voice_handler(message: types.Message):
     duration = message.voice.duration
 
     if duration > 120:
-        await message.answer("\u26a0\ufe0f Audio maksimal 2 daqiqa bo'lishi kerak. Iltimos, qisqaroq yuboring.")
+        await message.answer("⚠️ Audio maksimal 2 daqiqa bo'lishi kerak. Iltimos, qisqaroq yuboring.")
         return
 
     if not can_use(user_id):
-        await message.answer("\u2757 Sizning imkoniyatingiz tugagan. Iltimos, tarif tanlab, to\u2018lov qiling.")
+        await message.answer("‼️ Sizning imkoniyatingiz tugagan. Iltimos, tarif tanlab, to‘lov qiling.")
         return
 
-    await message.answer("\u23f3 Jarayon boshlandi. Iltimos, 1 daqiqa kuting...")
+    await message.answer("⏳ Jarayon boshlandi. Iltimos, 1 daqiqa kuting...")
 
     file_id = message.voice.file_id
     file = await bot.get_file(file_id)
     file_path = file.file_path
 
-    # Yuklab olish
     voice_ogg = f"temp/{user_id}.ogg"
     await bot.download_file(file_path, voice_ogg)
 
-    # AI orqali matn chiqarish
     matn = await transcribe_audio(voice_ogg)
-    await message.answer(f"\ud83d\udcc4 Natija:\n{matn}")
-
-    # Foydalanish hisobini oshiramiz
+    await message.answer(f"📄 Natija:\n{matn}")
     increment_usage(user_id)
 
 # ======================= BOT COMMANDS =========================
