@@ -52,11 +52,14 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 logging.basicConfig(level=logging.INFO)
 
 # Bot va dispatcher
-bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+bot = Bot(
+    token=BOT_TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher(storage=MemoryStorage())
 
 # ======================= START HANDLER =========================
-@dp.message(commands=["start"])
+@dp.message(F.text == "/start")
 async def start_handler(message: types.Message):
     text = (
         "<b>\ud83c\udfa7 Ovozdan matnga aylantiruvchi botga xush kelibsiz!</b>\n\n"
