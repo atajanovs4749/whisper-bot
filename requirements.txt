@@ -1,5 +1,6 @@
-aiogram==3.2.0
+aiogram==3.4.1
 python-dotenv
 aiohttp
 faster-whisper
+
 
