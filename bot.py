@@ -64,12 +64,12 @@ dp = Dispatcher(storage=MemoryStorage())
 @dp.message(F.text == "/start")
 async def start_handler(message: types.Message):
     text = (
-        "<b>\ud83c\udfa7 Ovozdan matnga aylantiruvchi botga xush kelibsiz!</b>\n\n"
-        "<b>\ud83c\udd93 1 martalik bepul foydalanish mavjud.</b>\n"
-        "<b>\ud83d\udce6 Tariflar:</b>\n"
-        "1) 5 ta audio \u2013 15 000 so'm\n"
-        "2) 9 ta audio \u2013 25 000 so'm\n\n"
-        "<b>\u26a0\ufe0f Qoidalar:</b>\n"
+        "<b>Ovozdan matnga aylantiruvchi botga xush kelibsiz!</b>\n\n"
+        "<b>1 martalik bepul foydalanish mavjud.</b>\n"
+        "<b>Tariflar:</b>\n"
+        "1) 5 ta audio – 15 000 so'm\n"
+        "2) 9 ta audio – 25 000 so'm\n\n"
+        "<b>Qoidalar:</b>\n"
         "- Audio 2 daqiqadan oshmasin.\n"
         "- Ovozingiz tiniq eshitilsin.\n"
         "- Har bir audio faqat bir martalik xizmatni egallaydi."
@@ -77,10 +77,10 @@ async def start_handler(message: types.Message):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="\ud83d\udcb3 15 000 so'm — 5 audio", callback_data="tarif_5")
+            InlineKeyboardButton(text="15 000 so'm — 5 audio", callback_data="tarif_5")
         ],
         [
-            InlineKeyboardButton(text="\ud83d\udcb3 25 000 so'm — 9 audio", callback_data="tarif_9")
+            InlineKeyboardButton(text="25 000 so'm — 9 audio", callback_data="tarif_9")
         ]
     ])
 
