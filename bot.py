@@ -5,7 +5,6 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.web.app import Application, SimpleRequestHandler
 from aiohttp import web
 from dotenv import load_dotenv
 from utils.whisper_worker import transcribe_audio  # AI funksiyasi
@@ -60,12 +59,12 @@ dp = Dispatcher(storage=MemoryStorage())
 @dp.message(commands=["start"])
 async def start_handler(message: types.Message):
     text = (
-        "<b>🎙 Ovozdan matnga aylantiruvchi botga xush kelibsiz!</b>\n\n"
-        "<b>🆓 1 martalik bepul foydalanish mavjud.</b>\n"
-        "<b>📦 Tariflar:</b>\n"
-        "1) 5 ta audio – 15 000 so'm\n"
-        "2) 9 ta audio – 25 000 so'm\n\n"
-        "<b>⚠️ Qoidalar:</b>\n"
+        "<b>\ud83c\udfa7 Ovozdan matnga aylantiruvchi botga xush kelibsiz!</b>\n\n"
+        "<b>\ud83c\udd93 1 martalik bepul foydalanish mavjud.</b>\n"
+        "<b>\ud83d\udce6 Tariflar:</b>\n"
+        "1) 5 ta audio \u2013 15 000 so'm\n"
+        "2) 9 ta audio \u2013 25 000 so'm\n\n"
+        "<b>\u26a0\ufe0f Qoidalar:</b>\n"
         "- Audio 2 daqiqadan oshmasin.\n"
         "- Ovozingiz tiniq eshitilsin.\n"
         "- Har bir audio faqat bir martalik xizmatni egallaydi."
@@ -73,10 +72,10 @@ async def start_handler(message: types.Message):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="💳 15 000 so'm — 5 audio", callback_data="tarif_5")
+            InlineKeyboardButton(text="\ud83d\udcb3 15 000 so'm — 5 audio", callback_data="tarif_5")
         ],
         [
-            InlineKeyboardButton(text="💳 25 000 so'm — 9 audio", callback_data="tarif_9")
+            InlineKeyboardButton(text="\ud83d\udcb3 25 000 so'm — 9 audio", callback_data="tarif_9")
         ]
     ])
 
@@ -90,14 +89,14 @@ async def tarif_callback(call: types.CallbackQuery):
 
     await bot.send_message(
         ADMIN_ID,
-        f"🧾 <b>Yangi to'lov chek yuborilishi kutilmoqda</b>\n\n"
-        f"👤 Foydalanuvchi: <code>{call.from_user.id}</code>\n"
-        f"📦 Tanlangan tarif: {tarif_text}"
+        f"\ud83e\uddfe <b>Yangi to'lov chek yuborilishi kutilmoqda</b>\n\n"
+        f"\ud83d\udc64 Foydalanuvchi: <code>{call.from_user.id}</code>\n"
+        f"\ud83d\udce6 Tanlangan tarif: {tarif_text}"
     )
 
     await call.message.answer(
-        "✅ Tanlangan tarif: <b>{}</b>\n\n"
-        "Iltimos, to‘lov chek rasmini yuboring. Admin tasdiqlaganidan so‘ng foydalanishingiz mumkin."
+        "\u2705 Tanlangan tarif: <b>{}</b>\n\n"
+        "Iltimos, to\u2018lov chek rasmini yuboring. Admin tasdiqlaganidan so\u2018ng foydalanishingiz mumkin."
         .format(tarif_text),
         reply_markup=None
     )
@@ -111,13 +110,13 @@ async def approve_payment(message: types.Message):
 
     parts = message.text.strip().split()
     if len(parts) != 3:
-        await message.answer("❌ Foydalanish: /tasdiq user_id limit\nMisol: /tasdiq 123456789 5")
+        await message.answer("\u274c Foydalanish: /tasdiq user_id limit\nMisol: /tasdiq 123456789 5")
         return
 
     user_id, limit = parts[1], int(parts[2])
     set_user_limit(user_id, limit)
-    await bot.send_message(int(user_id), f"✅ To‘lov tasdiqlandi. Sizga {limit} ta audio imkoniyati berildi.")
-    await message.answer("✅ Tasdiq muvaffaqiyatli amalga oshirildi.")
+    await bot.send_message(int(user_id), f"\u2705 To\u2018lov tasdiqlandi. Sizga {limit} ta audio imkoniyati berildi.")
+    await message.answer("\u2705 Tasdiq muvaffaqiyatli amalga oshirildi.")
 
 # ======================= VOICE HANDLER =========================
 @dp.message(F.voice)
@@ -126,14 +125,14 @@ async def voice_handler(message: types.Message):
     duration = message.voice.duration
 
     if duration > 120:
-        await message.answer("⚠️ Audio maksimal 2 daqiqa bo'lishi kerak. Iltimos, qisqaroq yuboring.")
+        await message.answer("\u26a0\ufe0f Audio maksimal 2 daqiqa bo'lishi kerak. Iltimos, qisqaroq yuboring.")
         return
 
     if not can_use(user_id):
-        await message.answer("❗ Sizning imkoniyatingiz tugagan. Iltimos, tarif tanlab, to‘lov qiling.")
+        await message.answer("\u2757 Sizning imkoniyatingiz tugagan. Iltimos, tarif tanlab, to\u2018lov qiling.")
         return
 
-    await message.answer("⏳ Jarayon boshlandi. Iltimos, 1 daqiqa kuting...")
+    await message.answer("\u23f3 Jarayon boshlandi. Iltimos, 1 daqiqa kuting...")
 
     file_id = message.voice.file_id
     file = await bot.get_file(file_id)
@@ -145,7 +144,7 @@ async def voice_handler(message: types.Message):
 
     # AI orqali matn chiqarish
     matn = await transcribe_audio(voice_ogg)
-    await message.answer(f"📄 Natija:\n{matn}")
+    await message.answer(f"\ud83d\udcc4 Natija:\n{matn}")
 
     # Foydalanish hisobini oshiramiz
     increment_usage(user_id)
@@ -161,10 +160,13 @@ async def set_bot_commands(bot: Bot):
 # ======================= MAIN (WEBHOOK) =========================
 async def main():
     await set_bot_commands(bot)
-    await bot.set_webhook(url=WEBHOOK_URL)
+    await bot.delete_webhook(drop_pending_updates=True)
     app = web.Application()
-    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path="/webhook")
+    dp.startup.register(lambda _: bot.set_webhook(WEBHOOK_URL))
+    dp.startup.register(lambda _: logging.info("Webhook o'rnatildi."))
+    dp.shutdown.register(lambda _: logging.info("Bot to'xtadi."))
+    app.router.add_post("/webhook", dp.as_handler())
     return app
 
 if __name__ == '__main__':
-    web.run_app(main())
+    web.run_app(main(), host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
