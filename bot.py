@@ -1,9 +1,9 @@
 import asyncio
 import logging
 import os
-from aiogram.client.default import DefaultBotProperties
-, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
 from aiohttp import web
